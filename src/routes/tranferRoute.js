@@ -16,7 +16,7 @@ router.post("/", async (req, res,next) => {
             throw new ApiError(400,'Missing required fields');
         }
         await mongoose.connect(url);
-
+            // Start a session
         const session = await mongoose.startSession();
 
         const transactionOptions = {
@@ -24,7 +24,7 @@ router.post("/", async (req, res,next) => {
             readConcern: { level: "local" },
             writeConcern: { w: "majority" },
         };
-
+        // Start a transaction
         session.startTransaction(transactionOptions);
 
         try {
@@ -38,17 +38,18 @@ router.post("/", async (req, res,next) => {
             if (fromUser.amount < amount) {
                 throw new ApiError(400,'Not enough money');
             }
-
+            //trừ tiền từ user gửi và cộng vào user nhận
             fromUser.amount -= amount;
             toUser.amount += amount;
-
+            // Save the user
             await fromUser.save({ session });
             await toUser.save({ session });
-
+                // Commit the transaction
             await session.commitTransaction();
             session.endSession();
             return res.status(200).json({ message: "Transaction completed successfully", fromUser: fromUser.name, toUser: toUser.name, amount: amount });
         } catch (error) {
+            // If an error occurs during the transaction, the transaction aborts and all changes made during the transaction are discarded.
             await session.abortTransaction();
             session.endSession();
             next(error);
