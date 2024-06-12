@@ -1,11 +1,8 @@
+const { StatusCodes } = require('http-status-codes')  
 
 // Middleware xử lý lỗi tập trung trong ứng dụng Back-end NodeJS (ExpressJS)
 
-
-
-
-
- const errorHandlingMiddleware = (err, req, res, next) => {
+function errorHandlingMiddleware (err, req, res, next)  {
 
   // Mặc định là 500 nếu không có statusCode
   if (!err.statusCode) err.statusCode = StatusCodes.INTERNAL_SERVER_ERROR
@@ -24,4 +21,6 @@
   // Trả responseError về phía Front-end
   res.status(responseError.statusCode).json(responseError)
 }
+
 module.exports = errorHandlingMiddleware
+

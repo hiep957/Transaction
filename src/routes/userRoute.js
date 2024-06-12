@@ -35,7 +35,7 @@ router.post("/", async (req, res,next) => {
         }
 
         const userId = user._id;
-        ;
+        
         // Create a request tracker
         let request_tracker = {};
         request_tracker["name"] = user_data["name"];
